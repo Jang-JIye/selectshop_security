@@ -39,5 +39,16 @@ public class UserController {
         userService.login(loginRequestDto, response);
         return "success";
     }
+    
+    //Security 기본 설정
+    @GetMapping("/forbidden")
+    public ModelAndView getForbidden() {
+        return new ModelAndView("forbidden");
+    }
+
+    @PostMapping("/forbidden")
+    public ModelAndView postForbidden() {
+        return new ModelAndView("forbidden");
+    }
 
 }
