@@ -1,12 +1,7 @@
 package com.sparta.myselectshop.controller;
 
-import com.sparta.myselectshop.entity.User;
-import com.sparta.myselectshop.jwt.JwtUtil;
-import com.sparta.myselectshop.repository.UserRepository;
 import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.FolderService;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,8 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/api")
 public class ShopController {
     private final FolderService folderService;
-    private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
 
     @GetMapping("/shop")
     public ModelAndView shop() {
@@ -31,8 +24,8 @@ public class ShopController {
 
     //로그인 한 유저가 메인페이지를 요청할 때 가지고 있는 폴더를 반환
     @GetMapping("/user-folder")
-    public String getUserInfo(Model model, HttpServletRequest request) {
-        model.addAttribute("folders", folderService.getFolders(request));
+    public String getUserInfo(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        model.addAttribute("folders", folderService.getFolders(userDetails.getUser()));
         return "/index :: #fragment";
     }
 
