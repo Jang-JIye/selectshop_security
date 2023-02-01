@@ -3,10 +3,12 @@ package com.sparta.myselectshop.controller;
 import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.repository.UserRepository;
+import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.FolderService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +37,7 @@ public class ShopController {
     }
 
     // 로그인 한 유저가 메인페이지를 요청할 때 유저의 이름 반환
-    @GetMapping("/user-info")
+/*    @GetMapping("/user-info")
     @ResponseBody
     public String getUserName(HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
@@ -59,5 +61,11 @@ public class ShopController {
         }else {
             return "fail";
         }
+    }*/
+    // 로그인 한 유저가 메인페이지를 요청할 때 유저의 이름 반환
+    @GetMapping("/user-info")
+    @ResponseBody
+    public String getUserName(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userDetails.getUsername();
     }
 }
