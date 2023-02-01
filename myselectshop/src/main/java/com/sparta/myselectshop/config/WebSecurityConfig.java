@@ -33,7 +33,8 @@ public class WebSecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
-    @Bean
+    //SpringBoot 3v 변경된 코드 확인 antMatchers() → requestMatchers()
+/*    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
@@ -47,6 +48,21 @@ public class WebSecurityConfig {
         http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
 
         return http.build();
-    }
+    }*/
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf().disable();
+
+    http.authorizeHttpRequests().requestMatchers("/api/user/**").permitAll()
+            .requestMatchers("/api/search").permitAll()
+            .requestMatchers("/api/shop").permitAll()
+            .anyRequest().authenticated();
+
+    http.formLogin().loginPage("/api/user/login-page").permitAll();
+
+    http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
+
+    return http.build();
+}
 
 }
