@@ -33,6 +33,7 @@ public class WebSecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
+    //SpringBoot 3v 변경된 코드 확인 antMatchers() → requestMatchers()
 /*    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
@@ -48,21 +49,20 @@ public class WebSecurityConfig {
 
         return http.build();
     }*/
-    
-    //SpringBoot 3v 변경된 코드 확인 antMatchers() → requestMatchers()
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf().disable();
 
-        http.authorizeHttpRequests().requestMatchers("/api/user/**").permitAll()
-                .requestMatchers("/api/search").permitAll()
-                .requestMatchers("/api/shop").permitAll()
-                .anyRequest().authenticated();
+    http.authorizeHttpRequests().requestMatchers("/api/user/**").permitAll()
+            .requestMatchers("/api/search").permitAll()
+            .requestMatchers("/api/shop").permitAll()
+            .anyRequest().authenticated();
 
-        http.formLogin().loginPage("/api/user/login-page").permitAll();
+    http.formLogin().loginPage("/api/user/login-page").permitAll();
 
-        http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
+    http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
 
-        return http.build();
-    }
+    return http.build();
+}
+
 }
