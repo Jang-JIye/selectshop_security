@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.myselectshop.dto.KakaoUserInfoDto;
 import com.sparta.myselectshop.entity.User;
+import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 
 @Slf4j
@@ -107,5 +110,34 @@ public class KakaoService {
         return new KakaoUserInfoDto(id, nickname, email);
     }
 
+    // 3. 필요시에 회원가입
+    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+        //DB 에 중독된 Kakao Id 가 있는지 확인
+        Long kakaoId = kakaoUserInfo.getId();
+        User kakaoUser = userRepository.findByKakaoId(kakaoId)
+                .orElse(null);
+        if (kakaoUser == null) {
+            //카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
+            String kakaoEmail = kakaoUserInfo.getEmail();
+            User sameEmailUser = userRepository.findByEmail(kakaoEmail)
+                    .orElse(null);
+            if (sameEmailUser != null) {
+                kakaoUser = sameEmailUser;
+                //기존 회원정보에 카카오 Id 추가
+                kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
+            } else {
+                //신규 회원가입
+                //password : random UUID
+                String password = UUID.randomUUID().toString();
+                String encodeedPassword = passwordEncoder.encode(password);
 
+                //email : kakao email
+                String email = kakaoUserInfo.getEmail();
+
+                kakaoUser = new User(kakaoUserInfo.getNickname(), kakaoId, encodeedPassword, email, UserRoleEnum.USER);
+            }
+            userRepository.save(kakaoUser);
+        }
+        return kakaoUser;
+    }
 }
