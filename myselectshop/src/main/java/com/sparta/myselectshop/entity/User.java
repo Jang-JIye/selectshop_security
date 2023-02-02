@@ -38,6 +38,13 @@ public class User {
     List<Folder> folders = new ArrayList<>();
 
     //카카오 사용자를 등록해 줄 때 kakaoId 를 넣어줘야 될 필요가 있기 때문에 생성자 추가
+    public User(String username, String password, String email, UserRoleEnum role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
+
     public User(String username, Long kakaoId, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.kakaoId = kakaoId;
