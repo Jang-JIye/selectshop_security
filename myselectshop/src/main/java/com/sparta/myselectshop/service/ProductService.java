@@ -2,14 +2,10 @@ package com.sparta.myselectshop.service;
 
 import com.sparta.myselectshop.dto.*;
 import com.sparta.myselectshop.entity.*;
-import com.sparta.myselectshop.jwt.JwtUtil;
 
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.FolderRepository;
 import com.sparta.myselectshop.repository.ProductRepository;
-import com.sparta.myselectshop.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
