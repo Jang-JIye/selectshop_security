@@ -9,7 +9,6 @@ import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -22,13 +21,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
-
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-//받아온 인가 코드로 AccessToken 도 가지고 오고, 가지고 온 AccessToken 으로 kakao 사용자 정보를 가지고오는 로직을 구현
 public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -61,7 +59,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "0384a0a9f57c58edb1c175e4ce6af51e");
-        body.add("redirect_uri", "http://localhost:8080/api/user/kakao/callback");
+        body.add("redirect_uri", "http://localhost:8090/api/user/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -103,8 +101,10 @@ public class KakaoService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties").get("nickname").asText();
-        String email = jsonNode.get("kakao_account").get("email").asText();
+        String nickname = jsonNode.get("properties")
+                .get("nickname").asText();
+        String email = jsonNode.get("kakao_account")
+                .get("email").asText();
 
         log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(id, nickname, email);
@@ -112,30 +112,30 @@ public class KakaoService {
 
     // 3. 필요시에 회원가입
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
-        //DB 에 중독된 Kakao Id 가 있는지 확인
+        // DB 에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
         if (kakaoUser == null) {
-            //카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
+            // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
             String kakaoEmail = kakaoUserInfo.getEmail();
-            User sameEmailUser = userRepository.findByEmail(kakaoEmail)
-                    .orElse(null);
+            User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
             if (sameEmailUser != null) {
                 kakaoUser = sameEmailUser;
-                //기존 회원정보에 카카오 Id 추가
+                // 기존 회원정보에 카카오 Id 추가
                 kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
             } else {
-                //신규 회원가입
-                //password : random UUID
+                // 신규 회원가입
+                // password: random UUID
                 String password = UUID.randomUUID().toString();
-                String encodeedPassword = passwordEncoder.encode(password);
+                String encodedPassword = passwordEncoder.encode(password);
 
-                //email : kakao email
+                // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(kakaoUserInfo.getNickname(), kakaoId, encodeedPassword, email, UserRoleEnum.USER);
+                kakaoUser = new User(kakaoUserInfo.getNicknmae(), kakaoId, encodedPassword, email, UserRoleEnum.USER);
             }
+
             userRepository.save(kakaoUser);
         }
         return kakaoUser;

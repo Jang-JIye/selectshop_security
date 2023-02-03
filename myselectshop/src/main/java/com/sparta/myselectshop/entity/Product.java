@@ -2,7 +2,7 @@ package com.sparta.myselectshop.entity;
 
 import com.sparta.myselectshop.dto.*;
 import com.sparta.myselectshop.naver.dto.ItemDto;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

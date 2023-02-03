@@ -1,8 +1,8 @@
 package com.sparta.myselectshop.entity;
 
-import jakarta.persistence.Column;
+import javax.persistence.Column;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

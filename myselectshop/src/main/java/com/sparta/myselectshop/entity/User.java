@@ -1,12 +1,11 @@
 package com.sparta.myselectshop.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Getter
 @NoArgsConstructor
@@ -22,7 +21,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
-    private Long kakaoId; //카카오 아이디 추가
+    private Long kakaoId;
 
     @Column(nullable = false)
     private String password;
@@ -37,7 +36,6 @@ public class User {
     @OneToMany
     List<Folder> folders = new ArrayList<>();
 
-    //카카오 사용자를 등록해 줄 때 kakaoId 를 넣어줘야 될 필요가 있기 때문에 생성자 추가
     public User(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;
@@ -57,5 +55,4 @@ public class User {
         this.kakaoId = kakaoId;
         return this;
     }
-
 }

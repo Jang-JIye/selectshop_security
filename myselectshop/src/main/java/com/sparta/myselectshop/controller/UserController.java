@@ -6,13 +6,14 @@ import com.sparta.myselectshop.dto.SignupRequestDto;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.service.KakaoService;
 import com.sparta.myselectshop.service.UserService;
-import jakarta.servlet.http.Cookie;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequiredArgsConstructor
@@ -59,10 +60,10 @@ public class UserController {
     //카카오에서 보내주는 '인가코드' 처리
     @GetMapping("/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        // code : 카카오 서버로부터 받은 인가 코드
+        // code: 카카오 서버로부터 받은 인가 코드
         String createToken = kakaoService.kakaoLogin(code, response);
 
-        //Cookie 생성 및 직접 브라우저에 set
+        // Cookie 생성 및 직접 브라우저에 Set
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, createToken.substring(7));
         cookie.setPath("/");
         response.addCookie(cookie);
